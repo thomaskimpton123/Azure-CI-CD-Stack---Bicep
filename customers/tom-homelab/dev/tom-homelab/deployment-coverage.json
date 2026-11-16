@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "summary": {
+    "deployable": 31,
+    "reviewOnly": 0
+  },
+  "services": [
+    {
+      "id": "automation",
+      "instance": 1,
+      "serviceName": "Automation / Update Manager",
+      "resourceName": "auto-platform-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the account (Entra ID auth only, network access, identity, roles, diagnostics), its hybrid worker groups and draft runbooks in their runtime environment (PowerShell 7.4, Python 3.10, or PowerShell 5.1 for graphical runbooks). Runbook code, schedules, webhooks, source control and encrypted variables are added after deployment; hybrid workers join their group by installing the worker extension on the VM."
+    },
+    {
+      "id": "azure-firewall",
+      "instance": 1,
+      "serviceName": "Azure Firewall / Policy",
+      "resourceName": "afw-hub-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the firewall, its policy and rules. Firewalls in a Virtual WAN hub, TLS inspection and web categories stay review-only."
+    },
+    {
+      "id": "azure-policy",
+      "instance": 1,
+      "serviceName": "Azure Policy",
+      "resourceName": "policy-alz-guardrails",
+      "coverage": "deployable",
+      "note": "Assigns the chosen built-in or existing custom definitions to the subscription the package deploys to, with exclusions, exemptions and remediation role assignments. Assignments get a managed identity in the package region for remediation; grant it the roles its policies need."
+    },
+    {
+      "id": "backup",
+      "instance": 1,
+      "serviceName": "Azure Backup",
+      "resourceName": "rsv-platform-aue-01",
+      "coverage": "deployable"
+    },
+    {
+      "id": "bastion",
+      "instance": 1,
+      "serviceName": "Azure Bastion",
+      "resourceName": "bas-hub-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the Bastion host on the VNet's AzureBastionSubnet with its zone-redundant public IP, scale units and access features. The Developer SKU uses the VNet without a public IP."
+    },
+    {
+      "id": "cost-management",
+      "instance": 1,
+      "serviceName": "Cost Management / Budgets",
+      "resourceName": "cost-alz-finops",
+      "coverage": "deployable",
+      "note": "Creates the subscription budgets with their alert thresholds and contacts, starting this month. Allocation tags, reservations, anomaly alerts and showback are processes recorded with the package."
+    },
+    {
+      "id": "ddos",
+      "instance": 1,
+      "serviceName": "DDoS Network Protection",
+      "resourceName": "ddos-hub-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the DDoS Network Protection plan and links every VNet the tile lists to it. Rapid Response contacts and cost protection are set up with Microsoft after deployment."
+    },
+    {
+      "id": "defender-cloud",
+      "instance": 1,
+      "serviceName": "Microsoft Defender for Cloud",
+      "resourceName": "defender-platform-aue-01",
+      "coverage": "deployable",
+      "note": "Sets the Defender plans for the subscription (with agentless scanning), the security contacts, the regulatory standards (as Azure Policy initiative assignments; the Microsoft cloud security benchmark is assigned by Defender itself) and continuous export to Log Analytics. Agent provisioning follows each plan's defaults."
+    },
+    {
+      "id": "dns-private-resolver",
+      "instance": 1,
+      "serviceName": "Azure DNS Private Resolver",
+      "resourceName": "dnspr-hub-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the resolver with inbound and outbound endpoints, and a forwarding ruleset with its rules and VNet links. On-premises conditional forwarders are recorded for your DNS team."
+    },
+    {
+      "id": "expressroute",
+      "instance": 1,
+      "serviceName": "ExpressRoute",
+      "resourceName": "er-primary-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the circuit and/or gateway. Connect the gateway to the circuit after the provider has provisioned it."
+    },
+    {
+      "id": "log-analytics",
+      "instance": 1,
+      "serviceName": "Log Analytics Workspaces",
+      "resourceName": "log-platform-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the workspace. Table plans, data collection rules and archive retention are recorded for review."
+    },
+    {
+      "id": "log-analytics",
+      "instance": 2,
+      "serviceName": "Log Analytics Workspaces",
+      "resourceName": "log-security-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the workspace. Table plans, data collection rules and archive retention are recorded for review."
+    },
+    {
+      "id": "managed-identities",
+      "instance": 1,
+      "serviceName": "Managed Identities / RBAC",
+      "resourceName": "id-platform-ops-aue-01",
+      "coverage": "deployable"
+    },
+    {
+      "id": "management-groups",
+      "instance": 1,
+      "serviceName": "Management Groups / Subscription Placement",
+      "resourceName": "mg-alz",
+      "coverage": "deployable",
+      "note": "Creates the management group under its parent in tenant.bicep, a separate tenant-scope deployment run before main.bicep, and places each subscription whose management group column (Subscriptions in Basics) names it. Vending source, archetype, allowed regions, owners and guardrails are recorded for review."
+    },
+    {
+      "id": "management-groups",
+      "instance": 2,
+      "serviceName": "Management Groups / Subscription Placement",
+      "resourceName": "mg-platform",
+      "coverage": "deployable",
+      "note": "Creates the management group under its parent in tenant.bicep, a separate tenant-scope deployment run before main.bicep, and places each subscription whose management group column (Subscriptions in Basics) names it. Vending source, archetype, allowed regions, owners and guardrails are recorded for review."
+    },
+    {
+      "id": "management-groups",
+      "instance": 3,
+      "serviceName": "Management Groups / Subscription Placement",
+      "resourceName": "mg-landing-zones",
+      "coverage": "deployable",
+      "note": "Creates the management group under its parent in tenant.bicep, a separate tenant-scope deployment run before main.bicep, and places each subscription whose management group column (Subscriptions in Basics) names it. Vending source, archetype, allowed regions, owners and guardrails are recorded for review."
+    },
+    {
+      "id": "management-groups",
+      "instance": 4,
+      "serviceName": "Management Groups / Subscription Placement",
+      "resourceName": "mg-corp",
+      "coverage": "deployable",
+      "note": "Creates the management group under its parent in tenant.bicep, a separate tenant-scope deployment run before main.bicep, and places each subscription whose management group column (Subscriptions in Basics) names it. Vending source, archetype, allowed regions, owners and guardrails are recorded for review."
+    },
+    {
+      "id": "management-groups",
+      "instance": 5,
+      "serviceName": "Management Groups / Subscription Placement",
+      "resourceName": "mg-online",
+      "coverage": "deployable",
+      "note": "Creates the management group under its parent in tenant.bicep, a separate tenant-scope deployment run before main.bicep, and places each subscription whose management group column (Subscriptions in Basics) names it. Vending source, archetype, allowed regions, owners and guardrails are recorded for review."
+    },
+    {
+      "id": "management-groups",
+      "instance": 6,
+      "serviceName": "Management Groups / Subscription Placement",
+      "resourceName": "mg-sandbox",
+      "coverage": "deployable",
+      "note": "Creates the management group under its parent in tenant.bicep, a separate tenant-scope deployment run before main.bicep, and places each subscription whose management group column (Subscriptions in Basics) names it. Vending source, archetype, allowed regions, owners and guardrails are recorded for review."
+    },
+    {
+      "id": "network-watcher",
+      "instance": 1,
+      "serviceName": "Network Watcher",
+      "resourceName": "nw-aue-01",
+      "coverage": "deployable",
+      "note": "Updates the region's NetworkWatcher_<region> in NetworkWatcherRG (Azure creates it with the first VNet) with VNet flow logs and Traffic Analytics. If the subscription opted out of automatic Network Watcher, create NetworkWatcherRG first. The flow-log storage account must allow trusted Microsoft services."
+    },
+    {
+      "id": "private-dns",
+      "instance": 1,
+      "serviceName": "Private DNS Zones",
+      "resourceName": "pdns-alz-aue-01",
+      "coverage": "deployable",
+      "note": "Creates each zone with its VNet links and record sets. A zone the private endpoints also use keeps a single link per VNet."
+    },
+    {
+      "id": "resource-groups",
+      "instance": 1,
+      "serviceName": "Resource Groups",
+      "resourceName": "rg-enterprise-alz-hub-spoke-dev",
+      "coverage": "deployable"
+    },
+    {
+      "id": "resource-groups",
+      "instance": 2,
+      "serviceName": "Resource Groups",
+      "resourceName": "rg-enterprise-alz-hub-spoke-dev-management",
+      "coverage": "deployable"
+    },
+    {
+      "id": "resource-groups",
+      "instance": 3,
+      "serviceName": "Resource Groups",
+      "resourceName": "rg-enterprise-alz-hub-spoke-dev-connectivity",
+      "coverage": "deployable"
+    },
+    {
+      "id": "resource-groups",
+      "instance": 4,
+      "serviceName": "Resource Groups",
+      "resourceName": "rg-enterprise-alz-hub-spoke-dev-identity",
+      "coverage": "deployable"
+    },
+    {
+      "id": "route-tables",
+      "instance": 1,
+      "serviceName": "Route Tables / UDRs",
+      "resourceName": "rt-corp-egress-aue-01",
+      "coverage": "deployable"
+    },
+    {
+      "id": "sentinel",
+      "instance": 1,
+      "serviceName": "Microsoft Sentinel",
+      "resourceName": "sentinel-security-aue-01",
+      "coverage": "deployable",
+      "note": "Turns on Microsoft Sentinel for the chosen workspace and grants the SOC roles. Retention and the commitment tier are the workspace's own settings. Data connectors, analytics rules, automation rules, watchlists, UEBA and threat intelligence are set up from the Content Hub and Defender portal after onboarding."
+    },
+    {
+      "id": "vnet",
+      "instance": 1,
+      "serviceName": "Virtual Network / Subnets",
+      "resourceName": "vnet-hub-aue-01",
+      "coverage": "deployable"
+    },
+    {
+      "id": "vnet",
+      "instance": 2,
+      "serviceName": "Virtual Network / Subnets",
+      "resourceName": "vnet-corp-aue-01",
+      "coverage": "deployable"
+    },
+    {
+      "id": "vnet",
+      "instance": 3,
+      "serviceName": "Virtual Network / Subnets",
+      "resourceName": "vnet-online-aue-01",
+      "coverage": "deployable"
+    },
+    {
+      "id": "vpn-gateway",
+      "instance": 1,
+      "serviceName": "VPN Gateway",
+      "resourceName": "vpngw-hub-aue-01",
+      "coverage": "deployable",
+      "note": "Creates the gateway and a local network gateway per site. Each site-to-site connection is created only when its pre-shared key is supplied at deployment (vpnSharedKeys)."
+    }
+  ]
+}
