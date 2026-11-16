@@ -1,0 +1,830 @@
+{
+  "schemaVersion": 5,
+  "cloud": "azure",
+  "outputFormat": "bicep",
+  "moduleStyle": "modules",
+  "subscriptions": "app-dev | Application landing zone | | mg-corp\nmanagement | Management | | mg-platform\nconnectivity | Connectivity | | mg-platform\nidentity | Identity | | mg-platform",
+  "packageType": "azure-infrastructure-service-catalog",
+  "infrastructureName": "tom-homelab",
+  "customer": "Tom - Homelab",
+  "workload": "platform",
+  "environment": "dev",
+  "primaryRegion": "australiaeast",
+  "subscriptionPurpose": "",
+  "costCentreOrOwner": "Tom - Homelab",
+  "commonRequirements": [
+    "Business owner, technical owner and cost centre",
+    "Subscription, environment, region and data-residency boundary",
+    "SKU, capacity, quotas, performance and expected growth",
+    "Availability-zone, SLA, backup, RTO and RPO requirements",
+    "Managed identity/RBAC, secrets, encryption and key ownership",
+    "Ingress, egress, DNS, firewall and private-connectivity requirements",
+    "Diagnostic logs, metrics, alerts, retention and SIEM integration",
+    "Policy, compliance, tagging, locks, budget and support requirements"
+  ],
+  "services": [
+    {
+      "id": "automation",
+      "instance": 1,
+      "uid": "r-8de5087d869b78ad",
+      "name": "Automation / Update Manager",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Patch rings and maintenance windows",
+        "Hybrid workers and identity",
+        "Runbooks and change control"
+      ],
+      "specific": {
+        "resourceName": "auto-platform-aue-01",
+        "identityAssignments": "",
+        "runtimeEnvironment": "PowerShell7.4",
+        "moduleSource": "PowerShellGallery",
+        "runbooks": "policy-remediation|PowerShell|enterprise infrastructure repo|Schedule\nsubscription-vending-audit|PowerShell|enterprise infrastructure repo|Schedule",
+        "maintenanceConfigurations": "",
+        "hybridWorkerGroups": "",
+        "keyVaultRef": "",
+        "encryptedAssetNames": "",
+        "privateConnectivity": "true",
+        "roleAssignments": "",
+        "sourceControlEnabled": "true",
+        "diagnosticWorkspaceRef": "log-platform-aue-01",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "azure-firewall",
+      "instance": 1,
+      "uid": "r-84bdabe7bf724447",
+      "name": "Azure Firewall / Policy",
+      "category": "Networking & delivery",
+      "requirements": [
+        "SKU, zones and forced tunnelling",
+        "Network/application/DNAT rules",
+        "Threat intelligence and logging"
+      ],
+      "specific": {
+        "resourceName": "afw-hub-aue-01",
+        "skuName": "AZFW_VNet",
+        "skuTier": "Premium",
+        "zones": "1,2,3",
+        "firewallSubnetId": "vnet-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|AzureFirewallSubnet",
+        "managementSubnetId": "",
+        "publicIpCount": "1",
+        "threatIntelMode": "AlertAndDeny",
+        "dnsProxy": "true",
+        "ruleCollections": "",
+        "idpsMode": "Alert",
+        "tlsInspectionEnabled": "false",
+        "tlsCertKeyVaultRef": "",
+        "tlsCertSecretName": "",
+        "urlFilteringEnabled": "true",
+        "blockedWebCategories": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity",
+        "diagnosticWorkspaceRef": "log-security-aue-01"
+      }
+    },
+    {
+      "id": "azure-policy",
+      "instance": 1,
+      "uid": "r-bf425e44de2a5979",
+      "name": "Azure Policy",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Allowed services/SKUs/regions",
+        "Initiatives and exemptions",
+        "Remediation identity and evidence"
+      ],
+      "specific": {
+        "resourceName": "policy-alz-guardrails",
+        "assignmentScopes": "ManagementGroup|mg-platform\nManagementGroup|mg-landing-zones\nManagementGroup|mg-corp\nManagementGroup|mg-online",
+        "initiativesDefinitions": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8||false|Cloud platform\n/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c||false|Cloud platform\n/providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99||false|Cloud platform",
+        "assignments": "security-baseline|mg-platform|/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8|Default|Microsoft cloud security baseline|\nallowed-regions|mg-landing-zones|/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c|Default|Australia East and Australia Southeast|{\"listOfAllowedLocations\":[\"australiaeast\",\"australiasoutheast\"]}\nrequired-tags|mg-landing-zones|/providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99|Default|Every resource has an Owner tag|{\"tagName\":\"Owner\"}",
+        "notScopes": "",
+        "identityAssignments": "",
+        "remediationLocation": "PrimaryRegion",
+        "remediationRoleAssignments": "",
+        "exemptions": "",
+        "complianceExportTarget": "LogAnalytics",
+        "remediationCadence": "Weekly",
+        "changeControlProcess": "PeerReview",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "backup",
+      "instance": 1,
+      "uid": "r-5fd19e23cb283b6b",
+      "name": "Azure Backup",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Workload inventory and vault type",
+        "Schedules, retention and immutability",
+        "Cross-region restore and testing"
+      ],
+      "specific": {
+        "resourceName": "rsv-platform-aue-01",
+        "vaultType": "RecoveryServicesVault",
+        "redundancyAndCrossRegionRestore": "GRS+CRR",
+        "protectedWorkloads": "",
+        "policies": "",
+        "softDeleteEnabled": "true",
+        "softDeleteRetentionDays": "14",
+        "immutabilityState": "Unlocked",
+        "muaEnabled": "true",
+        "resourceGuardRef": "",
+        "identityAssignments": "",
+        "cmkEnabled": "false",
+        "cmkKeyVaultKeyUri": "",
+        "vaultRoleAssignments": "",
+        "diagnosticWorkspaceRef": "log-platform-aue-01",
+        "alertEmailRecipients": "",
+        "restoreTestFrequency": "Quarterly",
+        "privateConnectivity": "false",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "bastion",
+      "instance": 1,
+      "uid": "r-e38f361b9e19d7b8",
+      "name": "Azure Bastion",
+      "category": "Networking & delivery",
+      "requirements": [
+        "SKU and host scaling",
+        "Dedicated subnet and public IP",
+        "Native client/session recording"
+      ],
+      "specific": {
+        "resourceName": "bas-hub-aue-01",
+        "skuName": "Standard",
+        "subnetRef": "vnet-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|AzureBastionSubnet",
+        "zones": "1,2,3",
+        "scaleUnits": "2",
+        "nativeClient": "true",
+        "ipConnect": "true",
+        "kerberos": "false",
+        "shareableLink": "false",
+        "sessionRecording": "false",
+        "diagnosticWorkspaceRef": "log-platform-aue-01",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    },
+    {
+      "id": "cost-management",
+      "instance": 1,
+      "uid": "r-b96ca354e59db662",
+      "name": "Cost Management / Budgets",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Scopes, budgets and alerts",
+        "Allocation tags and exports",
+        "Reservations/savings plan governance"
+      ],
+      "specific": {
+        "resourceName": "cost-alz-finops",
+        "targetSubscriptions": "",
+        "billingScopes": "mg-corp\nmg-online",
+        "budgets": "budget-monthly|5000|Monthly|80,100|Actual|finops@example.com\nbudget-monthly-forecast|5000|Monthly|100|Forecasted|finops@example.com",
+        "costAllocationTags": "Application: replace-before-deployment\nEnvironment: prod\nOwner: Cloud platform team\nCostCentre: replace-before-deployment",
+        "costExports": "",
+        "reservationsSavingsPlans": "",
+        "advisorAndAnomaly": "Azure Advisor weekly review | anomaly alerts to FinOps and workload owner",
+        "showbackChargeback": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "ddos",
+      "instance": 1,
+      "uid": "r-5ceee05c1c68a6fa",
+      "name": "DDoS Network Protection",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Protected VNets/public IPs",
+        "Response plan and contacts",
+        "Telemetry and cost protection"
+      ],
+      "specific": {
+        "resourceName": "ddos-hub-aue-01",
+        "protectionModel": "network",
+        "protectedVnets": "vnet-hub-aue-01\nvnet-corp-aue-01\nvnet-online-aue-01",
+        "protectedPublicIps": "",
+        "diagnosticLogs": "true",
+        "rapidResponseContacts": "",
+        "costProtection": "true",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    },
+    {
+      "id": "defender-cloud",
+      "instance": 1,
+      "uid": "r-c874a18f7686398f",
+      "name": "Microsoft Defender for Cloud",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Plans by subscription/resource type",
+        "Regulatory standards",
+        "Security contacts and export"
+      ],
+      "specific": {
+        "resourceName": "defender-platform-aue-01",
+        "targetSubscriptions": "app-dev, management, connectivity, identity",
+        "defenderPlans": "CloudPosture|true\nServersP2|true\nStorageAccounts|true\nKeyVaults|true",
+        "agentlessScanningEnabled": "true",
+        "autoProvisionAgents": "All",
+        "regulatoryStandards": "MCSB|\nISO27001|",
+        "securityContacts": "",
+        "continuousExportTarget": "LogAnalytics",
+        "continuousExportDataTypes": "",
+        "governanceRules": "",
+        "diagnosticWorkspaceRef": "log-security-aue-01",
+        "permissionsModel": "BuiltInRoles",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "dns-private-resolver",
+      "instance": 1,
+      "uid": "r-d8c28d92968e2fc9",
+      "name": "Azure DNS Private Resolver",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Inbound/outbound endpoints",
+        "Forwarding rulesets",
+        "Hybrid DNS dependencies"
+      ],
+      "specific": {
+        "resourceName": "dnspr-hub-aue-01",
+        "vnetRef": "vnet-hub-aue-01",
+        "inboundEndpointSubnetRef": "vnet-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|dns-inbound",
+        "outboundEndpointSubnetRef": "vnet-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|dns-outbound",
+        "forwardingRules": "",
+        "rulesetVnetLinks": "vnet-corp-aue-01\nvnet-online-aue-01",
+        "onPremDnsServers": "",
+        "conditionalForwarders": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    },
+    {
+      "id": "expressroute",
+      "instance": 1,
+      "uid": "r-fee4bdb6e7546ee2",
+      "name": "ExpressRoute",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Provider, circuit and bandwidth",
+        "Peering/BGP and redundancy",
+        "Gateway SKU and FastPath"
+      ],
+      "specific": {
+        "resourceName": "er-primary-aue-01",
+        "serviceProvider": "",
+        "peeringLocation": "",
+        "bandwidthMbps": "1000",
+        "skuTier": "Premium",
+        "billingModel": "MeteredData",
+        "deployCircuit": "false",
+        "vlanId": "",
+        "peerAsn": "",
+        "primarySecondaryPrefixes": "",
+        "gatewaySku": "ErGw2AZ",
+        "gatewaySubnetRef": "vnet-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|GatewaySubnet",
+        "fastPath": "true",
+        "secondaryCircuit": "true",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    },
+    {
+      "id": "log-analytics",
+      "instance": 1,
+      "uid": "r-7f021b6bc84d4a35",
+      "name": "Log Analytics Workspaces",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Centralized topology and region",
+        "Retention/archives and daily cap",
+        "Private Link scope and RBAC"
+      ],
+      "specific": {
+        "resourceName": "log-platform-aue-01",
+        "skuName": "PerGB2018",
+        "workspaceScope": "CentralPlatform",
+        "interactiveRetentionDays": "90",
+        "archiveRetentionDays": "365",
+        "tablePlans": "",
+        "dailyCapGb": "unlimited",
+        "commitmentTierGbPerDay": "none",
+        "amplsRequired": "false",
+        "ingestionAccessMode": "PrivateOnly",
+        "queryAccessMode": "PrivateOnly",
+        "workspaceRoleAssignments": "",
+        "resourceContextAccessEnabled": "true",
+        "cmkEnabled": "false",
+        "cmkKeyVaultKeyUri": "",
+        "dataCollectionRules": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management",
+        "retentionInDays": "90"
+      }
+    },
+    {
+      "id": "log-analytics",
+      "instance": 2,
+      "uid": "r-44b43cd6c242d62d",
+      "name": "Log Analytics Workspaces",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Centralized topology and region",
+        "Retention/archives and daily cap",
+        "Private Link scope and RBAC"
+      ],
+      "specific": {
+        "resourceName": "log-security-aue-01",
+        "skuName": "PerGB2018",
+        "workspaceScope": "CentralPlatform",
+        "interactiveRetentionDays": "90",
+        "archiveRetentionDays": "365",
+        "tablePlans": "",
+        "dailyCapGb": "unlimited",
+        "commitmentTierGbPerDay": "none",
+        "amplsRequired": "false",
+        "ingestionAccessMode": "PrivateOnly",
+        "queryAccessMode": "PrivateOnly",
+        "workspaceRoleAssignments": "",
+        "resourceContextAccessEnabled": "true",
+        "cmkEnabled": "false",
+        "cmkKeyVaultKeyUri": "",
+        "dataCollectionRules": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management",
+        "retentionInDays": "365"
+      }
+    },
+    {
+      "id": "managed-identities",
+      "instance": 1,
+      "uid": "r-080d7bd93c26f91c",
+      "name": "Managed Identities / RBAC",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "System versus user assigned",
+        "Least-privilege role map",
+        "Lifecycle and cross-subscription use"
+      ],
+      "specific": {
+        "resourceName": "id-platform-ops-aue-01",
+        "identityPurpose": "",
+        "roleAssignments": "",
+        "customRoles": "",
+        "federatedCredentials": "",
+        "crossSubscriptionRequired": "false",
+        "crossSubscriptionTargets": "",
+        "ownerPrincipalId": "",
+        "accessReviewFrequency": "Quarterly",
+        "orphanCleanupProcess": "Automated",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-identity"
+      }
+    },
+    {
+      "id": "management-groups",
+      "instance": 1,
+      "uid": "r-b26967cc3b7e7e11",
+      "name": "Management Groups / Subscription Placement",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Target management group and subscription vending source",
+        "Subscription archetype, ownership and environment",
+        "Inherited policy, RBAC and budget guardrails"
+      ],
+      "specific": {
+        "resourceName": "mg-alz",
+        "managementGroupMode": "Create",
+        "displayName": "Azure Landing Zones",
+        "parentManagementGroup": "",
+        "subscriptionVendingSource": "PlatformLandingZone",
+        "subscriptionArchetype": "Platform",
+        "allowedRegions": "australiaeast, australiasoutheast",
+        "subscriptionOwners": "Cloud platform team",
+        "inheritedGuardrails": "Azure Policy initiatives | least-privilege RBAC | Defender for Cloud | cost allocation tags",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "management-groups",
+      "instance": 2,
+      "uid": "r-fd75ec28646a2fca",
+      "name": "Management Groups / Subscription Placement",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Target management group and subscription vending source",
+        "Subscription archetype, ownership and environment",
+        "Inherited policy, RBAC and budget guardrails"
+      ],
+      "specific": {
+        "resourceName": "mg-platform",
+        "managementGroupMode": "Create",
+        "displayName": "Platform",
+        "parentManagementGroup": "mg-alz",
+        "subscriptionVendingSource": "PlatformLandingZone",
+        "subscriptionArchetype": "Platform",
+        "allowedRegions": "australiaeast, australiasoutheast",
+        "subscriptionOwners": "Cloud platform team",
+        "inheritedGuardrails": "Azure Policy initiatives | least-privilege RBAC | Defender for Cloud | cost allocation tags",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "management-groups",
+      "instance": 3,
+      "uid": "r-9f81b366b31e5a9e",
+      "name": "Management Groups / Subscription Placement",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Target management group and subscription vending source",
+        "Subscription archetype, ownership and environment",
+        "Inherited policy, RBAC and budget guardrails"
+      ],
+      "specific": {
+        "resourceName": "mg-landing-zones",
+        "managementGroupMode": "Create",
+        "displayName": "Landing zones",
+        "parentManagementGroup": "mg-alz",
+        "subscriptionVendingSource": "PlatformLandingZone",
+        "subscriptionArchetype": "ApplicationLandingZone",
+        "allowedRegions": "australiaeast, australiasoutheast",
+        "subscriptionOwners": "Cloud platform team",
+        "inheritedGuardrails": "Azure Policy initiatives | least-privilege RBAC | Defender for Cloud | cost allocation tags",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "management-groups",
+      "instance": 4,
+      "uid": "r-bc7dd681c5f1fe45",
+      "name": "Management Groups / Subscription Placement",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Target management group and subscription vending source",
+        "Subscription archetype, ownership and environment",
+        "Inherited policy, RBAC and budget guardrails"
+      ],
+      "specific": {
+        "resourceName": "mg-corp",
+        "managementGroupMode": "Create",
+        "displayName": "Corp",
+        "parentManagementGroup": "mg-landing-zones",
+        "subscriptionVendingSource": "PlatformLandingZone",
+        "subscriptionArchetype": "ApplicationLandingZone",
+        "allowedRegions": "australiaeast, australiasoutheast",
+        "subscriptionOwners": "Cloud platform team",
+        "inheritedGuardrails": "Azure Policy initiatives | least-privilege RBAC | Defender for Cloud | cost allocation tags",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "management-groups",
+      "instance": 5,
+      "uid": "r-e19850180f1e2bd2",
+      "name": "Management Groups / Subscription Placement",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Target management group and subscription vending source",
+        "Subscription archetype, ownership and environment",
+        "Inherited policy, RBAC and budget guardrails"
+      ],
+      "specific": {
+        "resourceName": "mg-online",
+        "managementGroupMode": "Create",
+        "displayName": "Online",
+        "parentManagementGroup": "mg-landing-zones",
+        "subscriptionVendingSource": "PlatformLandingZone",
+        "subscriptionArchetype": "ApplicationLandingZone",
+        "allowedRegions": "australiaeast, australiasoutheast",
+        "subscriptionOwners": "Cloud platform team",
+        "inheritedGuardrails": "Azure Policy initiatives | least-privilege RBAC | Defender for Cloud | cost allocation tags",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "management-groups",
+      "instance": 6,
+      "uid": "r-ef8ea19058346982",
+      "name": "Management Groups / Subscription Placement",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Target management group and subscription vending source",
+        "Subscription archetype, ownership and environment",
+        "Inherited policy, RBAC and budget guardrails"
+      ],
+      "specific": {
+        "resourceName": "mg-sandbox",
+        "managementGroupMode": "Create",
+        "displayName": "Sandbox",
+        "parentManagementGroup": "mg-alz",
+        "subscriptionVendingSource": "PlatformLandingZone",
+        "subscriptionArchetype": "Sandbox",
+        "allowedRegions": "australiaeast, australiasoutheast",
+        "subscriptionOwners": "Cloud platform team",
+        "inheritedGuardrails": "Azure Policy initiatives | least-privilege RBAC | Defender for Cloud | cost allocation tags",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "network-watcher",
+      "instance": 1,
+      "uid": "r-2c31f0a092fa4fdd",
+      "name": "Network Watcher",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Regions and flow logs",
+        "Connection Monitor tests",
+        "Retention and analytics workspace"
+      ],
+      "specific": {
+        "resourceName": "nw-aue-01",
+        "enabledRegions": "inherit primary region",
+        "flowLogTargets": "",
+        "flowLogStorageRef": "",
+        "flowLogRetentionDays": "30",
+        "trafficAnalytics": "true",
+        "trafficAnalyticsInterval": "10",
+        "trafficAnalyticsWorkspaceRef": "log-platform-aue-01",
+        "connectionMonitorTests": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev"
+      }
+    },
+    {
+      "id": "private-dns",
+      "instance": 1,
+      "uid": "r-9ecf33db63c7991a",
+      "name": "Private DNS Zones",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Required service zones",
+        "VNet links and ownership",
+        "Hybrid forwarding and resolution"
+      ],
+      "specific": {
+        "resourceName": "pdns-alz-aue-01",
+        "zoneNames": "privatelink.azurewebsites.net\nprivatelink.vaultcore.azure.net\nprivatelink.blob.core.windows.net",
+        "privateEndpointManaged": "true",
+        "vnetLinks": "privatelink.azurewebsites.net|vnet-corp-aue-01|false\nprivatelink.vaultcore.azure.net|vnet-corp-aue-01|false\nprivatelink.blob.core.windows.net|vnet-corp-aue-01|false",
+        "autoRegistration": "false",
+        "recordSets": "",
+        "hybridResolution": "true",
+        "ownershipModel": "central platform team",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    },
+    {
+      "id": "resource-groups",
+      "instance": 1,
+      "uid": "r-c37a070cf0329902",
+      "name": "Resource Groups",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Subscription and regional placement",
+        "Naming, ownership and purpose",
+        "Tags, locks and lifecycle governance"
+      ],
+      "specific": {
+        "resourceName": "rg-enterprise-alz-hub-spoke-dev",
+        "subscriptionRef": "app-dev",
+        "location": "",
+        "purpose": "Application workload",
+        "managedBy": "",
+        "lockLevel": "CanNotDelete",
+        "lockNotes": "Managed by the Azure infrastructure pack",
+        "tags": ""
+      }
+    },
+    {
+      "id": "resource-groups",
+      "instance": 2,
+      "uid": "r-e9483b0c1a43e110",
+      "name": "Resource Groups",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Subscription and regional placement",
+        "Naming, ownership and purpose",
+        "Tags, locks and lifecycle governance"
+      ],
+      "specific": {
+        "resourceName": "rg-enterprise-alz-hub-spoke-dev-management",
+        "subscriptionRef": "management",
+        "location": "",
+        "purpose": "Application workload",
+        "managedBy": "",
+        "lockLevel": "CanNotDelete",
+        "lockNotes": "Managed by the Azure infrastructure pack",
+        "tags": ""
+      }
+    },
+    {
+      "id": "resource-groups",
+      "instance": 3,
+      "uid": "r-a2174d48b5327591",
+      "name": "Resource Groups",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Subscription and regional placement",
+        "Naming, ownership and purpose",
+        "Tags, locks and lifecycle governance"
+      ],
+      "specific": {
+        "resourceName": "rg-enterprise-alz-hub-spoke-dev-connectivity",
+        "subscriptionRef": "connectivity",
+        "location": "",
+        "purpose": "Application workload",
+        "managedBy": "",
+        "lockLevel": "CanNotDelete",
+        "lockNotes": "Managed by the Azure infrastructure pack",
+        "tags": ""
+      }
+    },
+    {
+      "id": "resource-groups",
+      "instance": 4,
+      "uid": "r-2788144b34e3b10e",
+      "name": "Resource Groups",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Subscription and regional placement",
+        "Naming, ownership and purpose",
+        "Tags, locks and lifecycle governance"
+      ],
+      "specific": {
+        "resourceName": "rg-enterprise-alz-hub-spoke-dev-identity",
+        "subscriptionRef": "identity",
+        "location": "",
+        "purpose": "Application workload",
+        "managedBy": "",
+        "lockLevel": "CanNotDelete",
+        "lockNotes": "Managed by the Azure infrastructure pack",
+        "tags": ""
+      }
+    },
+    {
+      "id": "route-tables",
+      "instance": 1,
+      "uid": "r-9b227a3a5ed69c80",
+      "name": "Route Tables / UDRs",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Routing intent and next hops",
+        "Propagation requirements",
+        "Symmetric routing validation"
+      ],
+      "specific": {
+        "resourceName": "rt-corp-egress-aue-01",
+        "disableBgpRoutePropagation": "false",
+        "subnetAssociations": "vnet-corp-aue-01|rg-enterprise-alz-hub-spoke-dev|workload\nvnet-online-aue-01|rg-enterprise-alz-hub-spoke-dev|web",
+        "routes": "default-via-firewall|0.0.0.0/0|VirtualAppliance|azure-firewall|afw-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|",
+        "validateSymmetricRouting": "true",
+        "routeOwner": "Platform network team",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev"
+      }
+    },
+    {
+      "id": "sentinel",
+      "instance": 1,
+      "uid": "r-0839a8acd9988982",
+      "name": "Microsoft Sentinel",
+      "category": "Security, management & resilience",
+      "requirements": [
+        "Workspace and data connectors",
+        "Analytics/automation rules",
+        "Retention, UEBA and SOC ownership"
+      ],
+      "specific": {
+        "resourceName": "sentinel-security-aue-01",
+        "workspaceRef": "log-security-aue-01",
+        "retentionDays": "90",
+        "commitmentTierGbPerDay": "none",
+        "dataConnectors": "MicrosoftNative|Entra ID, Azure Activity and Defender for Cloud|SOC team",
+        "analyticsRules": "",
+        "automationRules": "",
+        "uebaEnabled": "true",
+        "threatIntelEnabled": "true",
+        "watchlists": "",
+        "socRoleAssignments": "",
+        "msspLighthouseRef": "",
+        "incidentOwnerPrincipalId": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-management"
+      }
+    },
+    {
+      "id": "vnet",
+      "instance": 1,
+      "uid": "r-38941490e17a432f",
+      "name": "Virtual Network / Subnets",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Non-overlapping IP plan",
+        "Subnet purposes/delegations",
+        "Peering and DNS design"
+      ],
+      "specific": {
+        "resourceName": "vnet-hub-aue-01",
+        "subscriptionRef": "",
+        "addressSpaces": "10.100.0.0/16",
+        "subnets": "AzureFirewallSubnet: 10.100.0.0/26\nAzureBastionSubnet: 10.100.0.64/26\nGatewaySubnet: 10.100.0.128/27\ndns-inbound: 10.100.1.0/28\ndns-outbound: 10.100.1.16/28",
+        "vnetEncryption": "false",
+        "deployBastion": "false",
+        "ddosNetworkProtection": "false",
+        "subnetDelegations": "dns-inbound: Microsoft.Network/dnsResolvers; dns-outbound: Microsoft.Network/dnsResolvers",
+        "dnsServers": "",
+        "peerings": "vnet%7Cvnet-corp-aue-01%7Crg-enterprise-alz-hub-spoke-dev|true\nvnet%7Cvnet-online-aue-01%7Crg-enterprise-alz-hub-spoke-dev|true",
+        "serviceEndpoints": "",
+        "ddosPlanId": "",
+        "defaultOutboundAccess": "false",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    },
+    {
+      "id": "vnet",
+      "instance": 2,
+      "uid": "r-b838af4b38f16849",
+      "name": "Virtual Network / Subnets",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Non-overlapping IP plan",
+        "Subnet purposes/delegations",
+        "Peering and DNS design"
+      ],
+      "specific": {
+        "resourceName": "vnet-corp-aue-01",
+        "subscriptionRef": "",
+        "addressSpaces": "10.110.0.0/16",
+        "subnets": "workload: 10.110.1.0/24\nprivate-endpoints: 10.110.2.0/24",
+        "vnetEncryption": "false",
+        "deployBastion": "false",
+        "ddosNetworkProtection": "false",
+        "subnetDelegations": "",
+        "dnsServers": "",
+        "peerings": "",
+        "serviceEndpoints": "",
+        "ddosPlanId": "",
+        "defaultOutboundAccess": "false",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev"
+      }
+    },
+    {
+      "id": "vnet",
+      "instance": 3,
+      "uid": "r-0d549b3f3d47d9f7",
+      "name": "Virtual Network / Subnets",
+      "category": "Networking & delivery",
+      "requirements": [
+        "Non-overlapping IP plan",
+        "Subnet purposes/delegations",
+        "Peering and DNS design"
+      ],
+      "specific": {
+        "resourceName": "vnet-online-aue-01",
+        "subscriptionRef": "",
+        "addressSpaces": "10.120.0.0/16",
+        "subnets": "web: 10.120.1.0/24\nprivate-endpoints: 10.120.2.0/24",
+        "vnetEncryption": "false",
+        "deployBastion": "false",
+        "ddosNetworkProtection": "false",
+        "subnetDelegations": "",
+        "dnsServers": "",
+        "peerings": "",
+        "serviceEndpoints": "",
+        "ddosPlanId": "",
+        "defaultOutboundAccess": "false",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev"
+      }
+    },
+    {
+      "id": "vpn-gateway",
+      "instance": 1,
+      "uid": "r-a1e63533bf454687",
+      "name": "VPN Gateway",
+      "category": "Networking & delivery",
+      "requirements": [
+        "S2S/P2S topology",
+        "SKU, zones and protocols",
+        "BGP, certificates and failover"
+      ],
+      "specific": {
+        "resourceName": "vpngw-hub-aue-01",
+        "gatewayType": "Vpn",
+        "vpnType": "RouteBased",
+        "skuName": "VpnGw2AZ",
+        "activeActive": "true",
+        "gatewaySubnetRef": "vnet-hub-aue-01|rg-enterprise-alz-hub-spoke-dev-connectivity|GatewaySubnet",
+        "bgpEnabled": "true",
+        "bgpAsn": "65515",
+        "siteConnections": "",
+        "p2sEnabled": "false",
+        "p2sAddressPool": "172.16.0.0/24",
+        "p2sProtocols": "OpenVPN,IkeV2",
+        "p2sAuthentication": "Entra ID",
+        "p2sRootCertificateData": "",
+        "resourceGroupRef": "rg-enterprise-alz-hub-spoke-dev-connectivity"
+      }
+    }
+  ],
+  "namingRules": null,
+  "deploymentAuthorized": false
+}
